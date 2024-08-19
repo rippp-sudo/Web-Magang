@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="position-fixed" style="top: -80px; button: 0; left: 0; margin: 0;  widt/h: 0; z-index: ;">
+<div class="position-fixed" style="top: -80px; button: 0; left: 0; margin: 0;  width: 0; z-index: 0;">
     <img src="logo/logo1.png" alt="Logo" style="width: 300px; display: block; margin: 0;  border: none;">
 </div>
     <div class="container d-flex justify-content-center align-items-center" style="flex-grow: 1;">
@@ -51,7 +51,6 @@
                             <label for="dayaPasangBaru">Daya (VA):</label>
                             <select name="daya" id="dayaPasangBaru" class="form-control" required>
                                 <option value="">Pilih Daya</option>
-                                <!-- Tambahkan opsi daya di sini -->
                                 <option value="450">450 VA</option>
                                 <option value="900">900 VA</option>
                                 <option value="1300">1.300 VA</option>
@@ -118,7 +117,6 @@
                             <label for="dayaLama">Daya Lama (VA):</label>
                             <select name="daya_lama" id="dayaLama" class="form-control">
                                 <option value="">Pilih Daya Lama</option>
-                                <!-- Tambahkan opsi daya lama di sini -->
                                 <option value="450">450 VA</option>
                                 <option value="900">900 VA</option>
                                 <option value="1300">1.300 VA</option>
@@ -141,7 +139,6 @@
                             <label for="dayaBaru">Daya Baru (VA):</label>
                             <select name="daya_baru" id="dayaBaru" class="form-control">
                                 <option value="">Pilih Daya Baru</option>
-                                <!-- Tambahkan opsi daya baru di sini -->
                                 <option value="450">450 VA</option>
                                 <option value="900">900 VA</option>
                                 <option value="1300">1.300 VA</option>
@@ -191,58 +188,75 @@
             </div>
         </div>
     </div>
-    <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <p class="text-center">
-                Website ini membantu Anda menghitung biaya permohonan listrik, baik untuk pemasangan baru maupun perubahan daya. Dengan menggunakan kalkulator ini, Anda dapat memperkirakan biaya yang perlu dibayar berdasarkan daya yang dipilih dan jenis pembayaran yang Anda inginkan.
-            </p>
-        </div>
-    </div>
-</div>
-<footer class="bg-dark text-white mt-5 p-4 text-center">
-    <p>&copy; 2024 Hitung Harga Permohonan Listrik. Semua Hak Cipta Dilindungi.</p>
-    <p>Dibuat oleh Listrik Analyzer.</p>
-</footer>
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- Custom Scripts -->
     <script>
         function toggleTokenPasangBaru() {
             var jenisPembayaran = document.getElementById('jenisPembayaranPasangBaru').value;
             var tokenDiv = document.getElementById('tokenPasangBaruDiv');
-            tokenDiv.style.display = (jenisPembayaran === 'prabayar') ? 'block' : 'none';
+
+            if (jenisPembayaran === 'prabayar') {
+                tokenDiv.style.display = 'block';
+            } else {
+                tokenDiv.style.display = 'none';
+            }
         }
 
         function toggleTokenPerubahanDaya() {
             var jenisPembayaran = document.getElementById('jenisPembayaranPerubahanDaya').value;
             var tokenDiv = document.getElementById('tokenPerubahanDayaDiv');
-            tokenDiv.style.display = (jenisPembayaran === 'prabayar') ? 'block' : 'none';
+
+            if (jenisPembayaran === 'prabayar') {
+                tokenDiv.style.display = 'block';
+            } else {
+                tokenDiv.style.display = 'none';
+            }
         }
 
         function hitungPasangBaru() {
-            var daya = document.getElementById('dayaPasangBaru').value;
+            var daya = parseInt(document.getElementById('dayaPasangBaru').value);
             var jenisPembayaran = document.getElementById('jenisPembayaranPasangBaru').value;
-            var token = document.getElementById('tokenPasangBaru') ? parseInt(document.getElementById('tokenPasangBaru').value) : 0;
-            
-            var tarif_per_kwh = 1444.70;
-            var tarif = (jenisPembayaran === 'prabayar') ? daya * tarif_per_kwh : daya * tarif_per_kwh * 0.9;
-            if (jenisPembayaran === 'prabayar' && token > 0) {
-                tarif += token;
+            var hargaPasang = 0;
+            var token = 0;
+    
+            // Menentukan harga pasang berdasarkan daya
+            switch(daya) {
+                case 450:
+                    hargaPasang = 421000;
+                    break;
+                case 900:
+                    hargaPasang = 843000;
+                    break;
+                case 1300:
+                    hargaPasang = 1218000;
+                    break;
+                case 2200:
+                    hargaPasang = 2062000;
+                    break;
+                case 3500:
+                    hargaPasang = 3391500;
+                    break;
+                default:
+                    hargaPasang = 0;
             }
-
-            var penjelasan = "Daya (" + daya + " VA) x Tarif per kWh (Rp " + tarif_per_kwh.toFixed(2).replace('.', ',') + ")";
-            penjelasan += (jenisPembayaran === 'prabayar') ? " untuk Prabayar." : " untuk Pasca Bayar (diskon 10%).";
-            if (jenisPembayaran === 'prabayar' && token > 0) {
-                penjelasan += "<br>+ Harga token sebesar Rp " + token.toLocaleString('id-ID') + ".";
+    
+            // Jika prabayar, tambahkan harga token
+            if (jenisPembayaran === 'prabayar') {
+                token = document.getElementById('tokenPasangBaru') ? parseInt(document.getElementById('tokenPasangBaru').value) : 0;
             }
-
+    
+            var totalHarga = hargaPasang + token;
+    
+            // Menampilkan hasil perhitungan
+            var penjelasan = "Harga pemasangan baru untuk daya " + daya + " VA adalah Rp " + hargaPasang.toLocaleString('id-ID') + ".";
+            if (jenisPembayaran === 'prabayar' && token > 0) {
+                penjelasan += "<br>Harga token sebesar Rp " + token.toLocaleString('id-ID') + ".";
+            }
+            penjelasan += "<br><strong>Total Harga yang harus dibayar:</strong> Rp " + totalHarga.toLocaleString('id-ID') + ".";
+    
             var resultDiv = document.getElementById('resultPasangBaru');
-            resultDiv.innerHTML = "<strong>Total Harga yang harus dibayar:</strong> Rp " + tarif.toLocaleString('id-ID') + "<br><br>" + penjelasan;
+            resultDiv.innerHTML = penjelasan;
         }
+        
 
         function hitungPerubahanDaya() {
             var dayaLama = parseInt(document.getElementById('dayaLama').value);
@@ -250,22 +264,52 @@
             var jenisPembayaran = document.getElementById('jenisPembayaranPerubahanDaya').value;
             var token = document.getElementById('tokenPerubahanDaya') ? parseInt(document.getElementById('tokenPerubahanDaya').value) : 0;
             
-            var tarif_per_kwh = 1444.70;
-            var selisih_daya = dayaBaru - dayaLama;
-            var tarif = (jenisPembayaran === 'prabayar') ? selisih_daya * tarif_per_kwh * 1.5 : selisih_daya * tarif_per_kwh * 1.3;
+            // Daftar biaya perubahan daya
+            var biayaPerubahan = {
+                "450-900": 421650,
+                "450-1300": 796450,
+                "450-2200": 1639750,
+                "450-3500": 2955450,
+                "450-4400": 3827550,
+                "450-5500": 4893450,
+                "900-1300": 374800,
+                "900-2200": 1218100,
+                "900-3500": 2519400,
+                "900-4400": 3391500,
+                "900-5500": 4457400,
+                "1300-2200": 843300,
+                "1300-3500": 2131800,
+                "1300-4400": 3003900,
+                "1300-5500": 4069800,
+                "2200-3500": 1259700,
+                "2200-4400": 2131800,
+                "2200-5500": 3197700,
+                "3500-4400": 872100,
+                "3500-5500": 1938000,
+                "4400-5500": 1065900
+            };
+    
+            var key = dayaLama + '-' + dayaBaru;
+            var tarif = biayaPerubahan[key] || 0;
+    
+            // Tambahkan harga token jika pembayaran prabayar
             if (jenisPembayaran === 'prabayar' && token > 0) {
                 tarif += token;
             }
-
-            var penjelasan = "Selisih Daya (" + selisih_daya + " VA) x Tarif per kWh (Rp " + tarif_per_kwh.toFixed(2).replace('.', ',') + ")";
-            penjelasan += (jenisPembayaran === 'prabayar') ? " dengan faktor 1.5 untuk Prabayar." : " dengan faktor 1.3 untuk Pasca Bayar.";
+    
+            var penjelasan = "Selisih Daya (" + (dayaBaru - dayaLama) + " VA) x Biaya Perubahan Daya";
+            penjelasan += (jenisPembayaran === 'prabayar') ? " dengan tambahan harga token." : " tanpa tambahan harga token.";
             if (jenisPembayaran === 'prabayar' && token > 0) {
                 penjelasan += "<br>+ Harga token sebesar Rp " + token.toLocaleString('id-ID') + ".";
             }
-
+    
             var resultDiv = document.getElementById('resultPerubahanDaya');
             resultDiv.innerHTML = "<strong>Total Harga yang harus dibayar:</strong> Rp " + tarif.toLocaleString('id-ID') + "<br><br>" + penjelasan;
         }
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
